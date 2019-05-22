@@ -1,24 +1,64 @@
 #include <SFML/Graphics.hpp>
 
+#include <vector>
+
+void drawOnImage(sf::Color color, int tool, sf::Texture canvas, sf::Image image, sf::Vector2<int> vector2i);
+
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-	sf::CircleShape shape(100.f);
-	shape.setFillColor(sf::Color::Green);
+	int windowHeight,windowWidth; //Window size that is specified by user's input to GUI
+	windowHeight = 600;
+	windowWidth = 800;
+	// create the window
+	sf::RenderWindow mainWindow(sf::VideoMode(windowWidth, windowHeight), "MainWindow");
+	sf::Image image;
+	image.create(windowWidth, windowHeight, sf::Color::White);
+	sf::Texture canvas;
+	sf::Color currentColor = sf::Color::Black;  // Color that user's chosen
+	int currentTool = 0; // instrument that is currently chosen
+	sf::Sprite sprite;
+	int mousedown = 0;
+	mainWindow.setFramerateLimit(60);
+	canvas.loadFromImage(image);
+	sprite.setTexture(canvas);
 
-	while (window.isOpen())
+	while (mainWindow.isOpen())
 	{
 		sf::Event event;
-		while (window.pollEvent(event))
+		while (mainWindow.pollEvent(event))
 		{
+			// "close requested" event: we close the window
 			if (event.type == sf::Event::Closed)
-				window.close();
+				mainWindow.close();
+			else if ((event.type == sf::Event::MouseMoved) && (mousedown == 1)) // MouseMoved and leftClickHeld
+			{
+				canvas.update(mainWindow);
+				drawOnImage(currentColor, currentTool, canvas, image, sf::Mouse::getPosition(mainWindow));
+			}
+			else if (event.type == sf::Event::MouseButtonPressed)
+			{
+				mousedown = 1;
+				drawOnImage(currentColor, currentTool, canvas, image, sf::Mouse::getPosition(mainWindow));
+			}
+			else if (event.type == sf::Event::MouseButtonReleased)
+			{
+				mousedown = 0;
+				canvas.update(mainWindow);
+				
+			}
 		}
-
-		window.clear();
-		window.draw(shape);
-		window.display();
+		mainWindow.clear();
+		mainWindow.draw(sprite);
+		mainWindow.display();
+		
+	 
 	}
 
 	return 0;
+}
+
+void drawOnImage(sf::Color color, int tool, sf::Texture canvas, sf::Image image,sf::Vector2<int> vector2i) {
+	if (tool == 0) {
+		image.setPixel(vector2i.x, vector2i.y, color);
+	}
 }
