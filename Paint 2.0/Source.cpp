@@ -1,6 +1,9 @@
 #include "Tools.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <array>
+#include <iostream>
+#include <list> 
 
 int main() {
   int windowHeight,
@@ -11,7 +14,7 @@ int main() {
   sf::RenderWindow mainWindow(sf::VideoMode(windowWidth, windowHeight),
                               "MainWindow");
   sf::Image image;
-  image.create(windowWidth, windowHeight, sf::Color::Black);
+  image.create(windowWidth, windowHeight, sf::Color::White);
   sf::Texture canvas;
   sf::Color currentColor = sf::Color::Black; // Color that user's chosen
   int currentTool = 0; // instrument that is currently chosen
@@ -19,11 +22,13 @@ int main() {
   int mousedown = 0;
   bool newLine = true;
   bool firstPoint = true;
-  std::vector< sf::Vertex[2]> vecLine; // Vector with all drawn Lines
+   // Vector with all drawn Lines
   canvas.loadFromImage(image);
   sprite.setTexture(canvas);
 
   sf::Vertex line[2];
+  //std::list<sf::Vertex[2]> listLine;
+  std::vector<std::pair< sf::Vertex, sf::Vertex>> vecLine;
   while (mainWindow.isOpen()) {
     canvas.loadFromImage(image);
 
@@ -46,12 +51,15 @@ int main() {
 		  if (firstPoint) {
 			  line[0].position = sf::Vector2f(sf::Mouse::getPosition(mainWindow));
 			  line[1].position = sf::Vector2f(sf::Mouse::getPosition(mainWindow));
+			  line[0].color = currentColor;
+			  line[1].color = currentColor;
 			  firstPoint = false;
 		  }
 		  else {
 			  line[1].position = sf::Vector2f(sf::Mouse::getPosition(mainWindow));
 			  firstPoint = true;
-			  vecLine.push_back(line);
+			 // listLine.push_back(line);
+			  vecLine.push_back(std::make_pair(line[0], line[1]));
 		  }
         mousedown = 1;
 		
@@ -72,11 +80,17 @@ int main() {
 	
     mainWindow.clear();
     mainWindow.draw(sprite);
-	for (std::vector< sf::Vertex[2]>::iterator it = vecLine.begin(); it != vecLine.end(); ++it) {
-		mainWindow.draw(*it, 2, sf::Lines);
+	//for (auto const& i : listLine) {
+	//	mainWindow.draw(i, 2, sf::Lines);
+	//}
+	for (auto const& i : vecLine) {
+		sf::Vertex res[2]; 
+			res[0] = i.first;
+		    res[1] = i.second;
+		
+		mainWindow.draw(res, 2, sf::Lines);
 	}
-    
-    mainWindow.display();
+        mainWindow.display();
   }
 
   return 0;
