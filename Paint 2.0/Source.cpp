@@ -1,34 +1,36 @@
 #include "Tools.h"
 #include <SFML/Graphics.hpp>
-#include <vector>
 #include <array>
 #include <iostream>
-#include <list> 
+#include <list>
+#include <vector>
 
 int main() {
   int windowHeight,
       windowWidth; // Window size that is specified by user's input to GUI
   windowHeight = 768;
   windowWidth = 1024;
-  // create the window
   sf::RenderWindow mainWindow(sf::VideoMode(windowWidth, windowHeight),
                               "MainWindow");
   sf::Image image;
   image.create(windowWidth, windowHeight, sf::Color::White);
   sf::Texture canvas;
-  sf::Color currentColor = sf::Color::Black; // Color that user's chosen
-  int currentTool = 0; // instrument that is currently chosen
   sf::Sprite sprite;
+
+  sf::Color currentColor = sf::Color::Black; // Color that user's chosen
+  int currentTool = 1; // instrument that is currently chosen
+
   int mousedown = 0;
-  bool newLine = true;
   bool firstPoint = true;
-   // Vector with all drawn Lines
+  std::vector<std::pair<sf::Vertex, sf::Vertex>>
+	  vecLine;  // Vector with all drawn Lines
+
   canvas.loadFromImage(image);
   sprite.setTexture(canvas);
 
-  sf::Vertex line[2];
-  //std::list<sf::Vertex[2]> listLine;
-  std::vector<std::pair< sf::Vertex, sf::Vertex>> vecLine;
+
+   
+
   while (mainWindow.isOpen()) {
     canvas.loadFromImage(image);
 
@@ -45,52 +47,37 @@ int main() {
             sf::Vertex(sf::Vector2f(sf::Mouse::getPosition(mainWindow).x,
                                     sf::Mouse::getPosition(mainWindow).y))};
         prevPos = sf::Mouse::getPosition(mainWindow);
-		mainWindow.draw(line, 2, sf::Lines);*/
+                mainWindow.draw(line, 2, sf::Lines);*/
 
       } else if (event.type == sf::Event::MouseButtonPressed) {
-		  if (firstPoint) {
-			  line[0].position = sf::Vector2f(sf::Mouse::getPosition(mainWindow));
-			  line[1].position = sf::Vector2f(sf::Mouse::getPosition(mainWindow));
-			  line[0].color = currentColor;
-			  line[1].color = currentColor;
-			  firstPoint = false;
-		  }
-		  else {
-			  line[1].position = sf::Vector2f(sf::Mouse::getPosition(mainWindow));
-			  firstPoint = true;
-			 // listLine.push_back(line);
-			  vecLine.push_back(std::make_pair(line[0], line[1]));
-		  }
-        mousedown = 1;
-		
-       /* sf::Vertex line[] = {
-            sf::Vertex(sf::Vector2f(sf::Mouse::getPosition(mainWindow).x,
-                                    sf::Mouse::getPosition(mainWindow).y)),
-            sf::Vertex(sf::Vector2f(sf::Mouse::getPosition(mainWindow).x,
-                                    sf::Mouse::getPosition(mainWindow).y))};
-        prevPos = sf::Mouse::getPosition(mainWindow);
         
-		 */
+        mousedown = 1;
+		if (currentTool == 1) {
+			vecLine = drawLine(mainWindow, currentColor, sf::Mouse::getPosition(mainWindow));
+		}
+        /* sf::Vertex line[] = {
+             sf::Vertex(sf::Vector2f(sf::Mouse::getPosition(mainWindow).x,
+                                     sf::Mouse::getPosition(mainWindow).y)),
+             sf::Vertex(sf::Vector2f(sf::Mouse::getPosition(mainWindow).x,
+                                     sf::Mouse::getPosition(mainWindow).y))};
+         prevPos = sf::Mouse::getPosition(mainWindow);
+         
+                  */
       } else if (event.type == sf::Event::MouseButtonReleased) {
         mousedown = 0;
-		newLine = true;
         canvas.update(mainWindow);
       }
     }
-	
+
     mainWindow.clear();
     mainWindow.draw(sprite);
-	//for (auto const& i : listLine) {
-	//	mainWindow.draw(i, 2, sf::Lines);
-	//}
 	for (auto const& i : vecLine) {
-		sf::Vertex res[2]; 
-			res[0] = i.first;
-		    res[1] = i.second;
-		
+		sf::Vertex res[2];
+		res[0] = i.first;
+		res[1] = i.second;
 		mainWindow.draw(res, 2, sf::Lines);
 	}
-        mainWindow.display();
+    mainWindow.display();
   }
 
   return 0;
