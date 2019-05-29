@@ -20,30 +20,29 @@ bool firstPoint = true;
 
 std::vector<std::pair<sf::Vertex, sf::Vertex>>
 drawPencil(sf::RenderWindow& mainWindow, sf::Color color,
-	sf::Vector2i currentPos, unsigned int thickness, int mode) {
+	sf::Vector2i currentPos, unsigned int thickness, int mode, sf::Vector2i prevPos) {
 	if (thickness == 0) {
-
-		if (mode == 1) {
+		if (mode == 1) {	
 			line[0].position = sf::Vector2f(sf::Mouse::getPosition(mainWindow));
+			line[0].color = color;
+			
+			
+		}
+		else if (mode == 0) {
+
 			line[1].position = sf::Vector2f(sf::Mouse::getPosition(mainWindow));
 			line[0].color = color;
 			line[1].color = color;
+			vecLine.push_back(std::make_pair(line[0], line[1]));
+			line[0].position = sf::Vector2f(sf::Mouse::getPosition(mainWindow));
+			
 
 		}
 		else {
-			if (firstPoint) {
-				line[0].position = sf::Vector2f(sf::Mouse::getPosition(mainWindow));
 				line[1].position = sf::Vector2f(sf::Mouse::getPosition(mainWindow));
-				line[0].color = color;
 				line[1].color = color;
-				firstPoint = false;
-			}
-			else {
-				line[1].position = sf::Vector2f(sf::Mouse::getPosition(mainWindow));
-				firstPoint = true;
 				vecLine.push_back(std::make_pair(line[0], line[1]));
 			}
-		}
 		return vecLine;
 	}
 	else {

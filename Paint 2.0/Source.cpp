@@ -12,8 +12,8 @@ int main() {
   windowWidth = 1024;
   sf::RenderWindow mainWindow(sf::VideoMode(windowWidth, windowHeight),
                               "MainWindow");
-  mainWindow.setFramerateLimit(144);
-
+  mainWindow.setFramerateLimit(1000);
+ 
   sf::Image image;
   image.create(windowWidth, windowHeight, sf::Color::White);
   sf::Texture canvas;
@@ -24,13 +24,13 @@ int main() {
   unsigned int thickness = 0;
 
   bool firstPoint = true;
-
+  sf::Vector2i prevPos;
   std::vector<std::pair<sf::Vertex, sf::Vertex>>
       vecLine; // Vector with all drawn Lines
-
+  sf::IntRect area = sf::IntRect(0, 0, windowWidth, windowHeight);
   canvas.loadFromImage(image);
   sprite.setTexture(canvas);
-  sf::Vector2i prevPos;
+ 
   while (mainWindow.isOpen()) {
     // canvas.loadFromImage(image);
 
@@ -47,7 +47,7 @@ int main() {
         case 0: {
           vecLine =
               drawPencil(mainWindow, currentColor,
-                         sf::Mouse::getPosition(mainWindow), thickness, 0);
+                         sf::Mouse::getPosition(mainWindow), thickness, 0, prevPos);
 		  prevPos = sf::Mouse::getPosition(mainWindow);
           break;
         }
@@ -57,7 +57,7 @@ int main() {
         case 0: {
           vecLine =
               drawPencil(mainWindow, currentColor,
-                         sf::Mouse::getPosition(mainWindow), thickness, 1);
+                         sf::Mouse::getPosition(mainWindow), thickness, 1, prevPos);
           break;
         }
         case 1: {
@@ -67,9 +67,26 @@ int main() {
         }
         }
       } else if (event.type == sf::Event::MouseButtonReleased) {
-
+		  switch (currentTool) {
+		  case 0: {
+			  vecLine =
+				  drawPencil(mainWindow, currentColor,
+					  sf::Mouse::getPosition(mainWindow), thickness, 3, prevPos);
+			  break;
+		  }
+		  }
         canvas.update(mainWindow);
-      }
+	  }
+	  else if (event.type == sf::Event::Resized)
+	  {
+		  // Window got resized, update the view to the new size
+		  sf::View view(mainWindow.getView());
+		  const sf::Vector2f size(mainWindow.getSize().x, mainWindow.getSize().y);
+		  view.setSize(size); // Set the size
+		  view.setCenter(size / 2.f); // Set the center, moving our drawing to the top left
+		  mainWindow.setView(view); // Apply the view
+		 
+	  } 
     }
 
     mainWindow.clear();
