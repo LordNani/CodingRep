@@ -80,9 +80,23 @@ void drawRect(sf::RenderTexture &canvas, sf::Color &color,
       rect.setFillColor(sf::Color::Transparent);
       rect.setOutlineColor(color);
       rect.setOutlineThickness(thickness);
-      rect.setPosition(point1 + sf::Vector2f(thickness, thickness));
-      rect.setSize(currentPos - point1 - sf::Vector2f(thickness, thickness) -
-                   sf::Vector2f(thickness, thickness));
+      
+	  if (point1.x > currentPos.x && point1.y > currentPos.y) {
+		  rect.setSize(currentPos - point1 +  sf::Vector2f(2*thickness, 2*thickness));
+		  rect.setPosition(point1 - sf::Vector2f(thickness, thickness));
+	  }
+	  else if (point1.x > currentPos.x && point1.y < currentPos.y) {
+		  rect.setSize(currentPos - point1 + sf::Vector2f(2*thickness, -2*thickness));
+		  rect.setPosition(point1 - sf::Vector2f(thickness, -1*thickness));
+	  }
+	  else if (point1.y > currentPos.y){
+		  rect.setSize(currentPos - point1 + sf::Vector2f(-2*thickness, 2*thickness));
+		  rect.setPosition(point1 + sf::Vector2f(thickness, -1*thickness));
+	  }
+	  else {
+		  rect.setSize(currentPos - point1 + sf::Vector2f(-2 *thickness,- 2 * thickness));
+		  rect.setPosition(point1 + sf::Vector2f(thickness, thickness));
+	  }
     }
 
     canvas.draw(rect);
@@ -122,7 +136,7 @@ void drawEllipse(sf::RenderTexture &canvas, sf::Color &color,
 		  ellipse.setPosition(point1 + sf::Vector2f(radius_x, -2*radius_y) + sf::Vector2f(thickness, thickness));
 	  }
 	  else if(point1.x > currentPos.x && point1.y< currentPos.y){
-		  ellipse.setPosition(point1 + sf::Vector2f(-1 * radius_x, radius_y) + sf::Vector2f(-1.f * thickness, thickness));
+		  ellipse.setPosition(point1 + sf::Vector2f(-1.f * radius_x, radius_y) + sf::Vector2f(-1.f * thickness, thickness));
 	  }
 	  else {
 		  ellipse.setPosition(point1 + sf::Vector2f(radius_x, radius_y) + sf::Vector2f(thickness,thickness));

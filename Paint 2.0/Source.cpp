@@ -20,7 +20,7 @@ int main() {
   sf::Sprite sprite;
 
   sf::Color currentColor(255, 0, 0, 50); // Color that user's chosen
-  int currentTool = 4;                   // instrument that is currently chosen
+  int currentTool = 3;                   // instrument that is currently chosen
   float thickness = 30;
   bool isFilled = false;
 
