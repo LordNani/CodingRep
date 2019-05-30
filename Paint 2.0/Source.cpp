@@ -19,18 +19,16 @@ int main() {
   sf::Color currentColor(255, 0, 0, 50); // Color that user's chosen
   int currentTool = 1;                   // instrument that is currently chosen
   float thickness = 30;  // line thickness, brush size, or outline thickness
-  bool isFilled = false; // if false, thickness = outline thickness
+  bool isFilled = true; // if false, thickness = outline thickness
 
   sf::Vector2i prevPos;
-
-  std::vector<std::pair<sf::Vertex, sf::Vertex>>
-      vecLine; // Vector with all drawn Lines
 
   canvas.loadFromImage(image);
   sprite.setTexture(canvas);
   sf::RenderTexture canvasTwo;
   canvasTwo.create(1920, 1080);
   canvasTwo.clear(sf::Color::White);
+  canvasTwo.setSmooth(true);
   sprite.setTexture(canvasTwo.getTexture(), true);
   while (mainWindow.isOpen()) {
     // canvas.loadFromImage(image);
@@ -56,6 +54,13 @@ int main() {
                     thickness);
           break;
         }
+		case 3: {
+			drawRect(canvasTwo, currentColor,
+				sf::Vector2f(sf::Mouse::getPosition(mainWindow)), thickness,
+				isFilled, 2);
+			break;
+		}
+
         }
       } else if (event.type == sf::Event::MouseButtonPressed) {
         switch (currentTool) {
@@ -66,7 +71,7 @@ int main() {
         }
         case 1: {
           drawLine(canvasTwo, currentColor,
-                             sf::Mouse::getPosition(mainWindow));
+                             sf::Mouse::getPosition(mainWindow),thickness);
           break;
         }
         case 2: {
@@ -78,7 +83,7 @@ int main() {
         case 3: {
           drawRect(canvasTwo, currentColor,
                    sf::Vector2f(sf::Mouse::getPosition(mainWindow)), thickness,
-                   isFilled, true);
+                   isFilled, 1);
           break;
         }
         case 4: {
@@ -96,7 +101,7 @@ int main() {
         case 3: {
           drawRect(canvasTwo, currentColor,
                    sf::Vector2f(sf::Mouse::getPosition(mainWindow)), thickness,
-                   isFilled, false);
+                   isFilled, 3);
           break;
         }
         case 4: {
@@ -125,16 +130,8 @@ int main() {
     test.setOutlineColor(sf::Color::Black);
     canvasTwo.draw(test);
     canvasTwo.display(); // end of it.
-    mainWindow.clear();
-    mainWindow.draw(sprite);
-    for (auto const &i : vecLine) {
-      sf::Vertex res[2];
-      res[0] = i.first;
-      res[1] = i.second;
-      mainWindow.draw(res, 2, sf::Lines);
-    }
 
-    mainWindow.display();
+	renderOnScreen(mainWindow, sprite);
   }
 
   return 0;

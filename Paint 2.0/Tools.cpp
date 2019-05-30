@@ -6,6 +6,7 @@
 std::vector<std::pair<sf::Vertex, sf::Vertex>> vecLine; // vector to store lines
 sf::Vertex line[2];                                     // for line
 bool firstPoint = true;
+sf::RectangleShape tLine;
 sf::CircleShape brush;   // brush shape
 sf::ConvexShape ellipse; // for ellipse tool
 float radius_x;
@@ -14,9 +15,10 @@ unsigned short const quality = 50; // point Count of convex
 sf::Vector2f point1;               // for everything
 sf::RectangleShape rect;           // rect tool
 
+int RT = 0;
 
-void drawPencil(sf::Color &color,
-           sf::Vector2i currentPos, int mode, sf::RenderTexture& canvas) {
+void drawPencil(sf::Color &color, sf::Vector2i currentPos, int mode,
+                sf::RenderTexture &canvas) {
 
   if (mode == 1) {
     line[0].position = sf::Vector2f(currentPos);
@@ -26,14 +28,14 @@ void drawPencil(sf::Color &color,
     line[1].position = sf::Vector2f(currentPos);
     line[0].color = color;
     line[1].color = color;
-	canvas.draw(line, 2, sf::Lines);
-	canvas.display();
+    canvas.draw(line, 2, sf::Lines);
+    canvas.display();
     line[0].position = sf::Vector2f(currentPos);
   } else {
     line[1].position = sf::Vector2f(currentPos);
     line[1].color = color;
-	canvas.draw(line, 2, sf::Lines);
-	canvas.display();
+    canvas.draw(line, 2, sf::Lines);
+    canvas.display();
   }
 }
 
@@ -49,28 +51,50 @@ void drawBrush(sf::RenderTexture &canvas, sf::Color &color,
 }
 
 void drawLine(sf::RenderTexture &canvas, sf::Color &color,
-         sf::Vector2i currentPos) {
-  if (firstPoint) {
-    line[0].position = sf::Vector2f(currentPos);
-    line[1].position = sf::Vector2f(currentPos);
-    line[0].color = color;
-    line[1].color = color;
-    firstPoint = false;
+              sf::Vector2i currentPos, float thickness) {
+  if (thickness <= 1) {
+    if (firstPoint) {
+      line[0].position = sf::Vector2f(currentPos);
+      line[1].position = sf::Vector2f(currentPos);
+      line[0].color = color;
+      line[1].color = color;
+      firstPoint = false;
+    } else {
+      line[1].position = sf::Vector2f(currentPos);
+      firstPoint = true;
+      canvas.draw(line, 2, sf::Lines);
+      canvas.display();
+    }
   } else {
-    line[1].position = sf::Vector2f(currentPos);
-    firstPoint = true;
-	canvas.draw(line, 2, sf::Lines);
-	canvas.display();
+    if (firstPoint) {
+      point1 = sf::Vector2f(currentPos);
+      firstPoint = false;
+    } else {
+      tLine.setPosition(point1);
+      tLine.setFillColor(color);
+
+      float dx = point1.x - currentPos.x;
+      float dy = point1.y - currentPos.y;
+      float length = sqrt(dx * dx + dy * dy);
+      float rotation = (atan2(dy, dx)) * 180 / PI;
+      tLine.setSize(sf::Vector2f(thickness, length));
+	  tLine.setOrigin(sf::Vector2f(thickness / 2, 0));
+      tLine.setRotation(rotation + 90);
+
+      canvas.draw(tLine);
+      canvas.display();
+      firstPoint = true;
+    }
   }
 }
 
 void drawRect(sf::RenderTexture &canvas, sf::Color &color,
               sf::Vector2f currentPos, float thickness, bool isFilled,
-              bool mode) {
-  if (mode)
+              int mode) {
+  if (mode == 1) {
     point1 = currentPos;
-  else {
-
+    setR(1);
+  } else if (mode == 2) {
     if (isFilled) {
       rect.setFillColor(color);
       rect.setPosition(point1);
@@ -98,7 +122,9 @@ void drawRect(sf::RenderTexture &canvas, sf::Color &color,
         rect.setPosition(point1 + sf::Vector2f(thickness, thickness));
       }
     }
+  } else {
 
+    setR(0);
     canvas.draw(rect);
     canvas.display();
   }
@@ -149,3 +175,15 @@ void drawEllipse(sf::RenderTexture &canvas, sf::Color &color,
     canvas.display();
   }
 }
+void renderOnScreen(sf::RenderWindow &mWindow, sf::Sprite &sprite) {
+  mWindow.clear();
+  mWindow.draw(sprite);
+  if (RT == 1) {
+    mWindow.draw(rect);
+  } else if (RT == 2) {
+    mWindow.draw(ellipse);
+  }
+
+  mWindow.display();
+}
+void setR(int type) { RT = type; }
