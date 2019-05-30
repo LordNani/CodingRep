@@ -9,7 +9,11 @@ drawPencil(sf::RenderWindow &mainWindow, sf::Color &color,
 std::vector<std::pair<sf::Vertex, sf::Vertex>>
 drawLine(sf::RenderWindow &mainWindow, sf::Color &color,
          sf::Vector2i currentPos);
-std::vector<sf::CircleShape> drawBrush(sf::RenderWindow &mainWindow,
-                                             sf::Color &color,
-                                             sf::Vector2i currentPos,
-                                             float thickness);
+void drawBrush(sf::RenderTexture& canvas, sf::Color& color,
+	sf::Vector2f currentPos, float thickness);
+void drawRect(sf::RenderTexture& canvas, sf::Color& color,
+	sf::Vector2f currentPos,
+	float thickness, bool isFilled, bool mode);
+void drawEllipse(sf::RenderTexture& canvas, sf::Color& color,
+	sf::Vector2f currentPos, float thickness, bool isFilled,
+	bool mode);

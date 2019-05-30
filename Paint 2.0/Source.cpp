@@ -19,9 +19,10 @@ int main() {
   sf::Texture canvas;
   sf::Sprite sprite;
 
-  sf::Color currentColor = sf::Color::Black; // Color that user's chosen
-  int currentTool = 2; // instrument that is currently chosen
+  sf::Color currentColor(255, 0, 0, 50); // Color that user's chosen
+  int currentTool = 4;                   // instrument that is currently chosen
   float thickness = 30;
+  bool isFilled = false;
 
   bool firstPoint = true;
   sf::Vector2i prevPos;
@@ -29,11 +30,11 @@ int main() {
   std::vector<std::pair<sf::Vertex, sf::Vertex>>
       vecLine; // Vector with all drawn Lines
   std::vector<sf::CircleShape> vecCircle;
-  sf::CircleShape brush;
+
   canvas.loadFromImage(image);
   sprite.setTexture(canvas);
   sf::RenderTexture canvasTwo;
-  canvasTwo.create(1920,1080);
+  canvasTwo.create(1920, 1080);
   canvasTwo.clear(sf::Color::White);
   sprite.setTexture(canvasTwo.getTexture(), true);
   while (mainWindow.isOpen()) {
@@ -52,46 +53,63 @@ int main() {
         case 0: {
           vecLine = drawPencil(mainWindow, currentColor,
                                sf::Mouse::getPosition(mainWindow), 0);
-          prevPos = sf::Mouse::getPosition(mainWindow);
           break;
         }
-		case 2: {
-			vecCircle = drawBrush(mainWindow, currentColor, sf::Mouse::getPosition(mainWindow), 30);
-			break;
-		}
+        case 2: {
+          drawBrush(canvasTwo, currentColor,
+                    sf::Vector2f(sf::Mouse::getPosition(mainWindow)),
+                    thickness);
+          break;
+        }
         }
       } else if (event.type == sf::Event::MouseButtonPressed) {
-		  switch (currentTool) {
-		  case 0: {
-			  vecLine = drawPencil(mainWindow, currentColor,
-				  sf::Mouse::getPosition(mainWindow), 1);
-			  break;
-		  }
-		  case 1: {
-			  vecLine = drawLine(mainWindow, currentColor,
-				  sf::Mouse::getPosition(mainWindow));
-			  break;
-		  }
-		  case 2: {
-			  sf::Vector2f newPos(mainWindow.mapPixelToCoords(sf::Vector2i(event.mouseMove.x, event.mouseMove.y)));
-			  brush.setRadius(thickness);
-			  brush.setPointCount(100);
-			  brush.setFillColor(currentColor);
-			  brush.setOrigin(thickness, thickness);
-			  brush.setPosition(sf::Vector2f(sf::Mouse::getPosition(mainWindow)));
-			  canvasTwo.draw(brush);
-			  canvasTwo.display();
-			  
-			  
-		  }
-		  }
-      } else if (event.type == sf::Event::MouseButtonReleased) {
         switch (currentTool) {
         case 0: {
           vecLine = drawPencil(mainWindow, currentColor,
-                               sf::Mouse::getPosition(mainWindow), 2);
+                               sf::Mouse::getPosition(mainWindow), 1);
           break;
         }
+        case 1: {
+          vecLine = drawLine(mainWindow, currentColor,
+                             sf::Mouse::getPosition(mainWindow));
+          break;
+        }
+        case 2: {
+          drawBrush(canvasTwo, currentColor,
+                    sf::Vector2f(sf::Mouse::getPosition(mainWindow)),
+                    thickness);
+          break;
+        }
+		case 3: {
+			drawRect(canvasTwo, currentColor,
+				sf::Vector2f(sf::Mouse::getPosition(mainWindow)),
+				thickness, isFilled,true);
+			break;
+		}
+		case 4: {
+			drawEllipse(canvasTwo, currentColor,
+				sf::Vector2f(sf::Mouse::getPosition(mainWindow)),
+				thickness, isFilled, true);
+			break;
+		}
+        }
+      } else if (event.type == sf::Event::MouseButtonReleased) {
+        switch (currentTool) {
+        case 0: {
+          break;
+        }
+		case 3: {
+			drawRect(canvasTwo, currentColor,
+				sf::Vector2f(sf::Mouse::getPosition(mainWindow)),
+				thickness, isFilled, false);
+			break;
+		}
+		case 4: {
+			drawEllipse(canvasTwo, currentColor,
+				sf::Vector2f(sf::Mouse::getPosition(mainWindow)),
+				thickness, isFilled, false);
+			break;
+		}
         }
 
       } else if (event.type == sf::Event::Resized) {
@@ -104,19 +122,23 @@ int main() {
         mainWindow.setView(view); // Apply the view
       }
     }
-
+	sf::RectangleShape test(sf::Vector2f(400, 200));
+	test.setPosition(windowWidth / 2-test.getSize().x/2, windowHeight / 2- test.getSize().y/2);
+	test.setFillColor(sf::Color::Transparent);
+	test.setOutlineThickness(2.f);
+	test.setOutlineColor(sf::Color::Black);
+	canvasTwo.draw(test);
+	canvasTwo.display();
     mainWindow.clear();
     mainWindow.draw(sprite);
-	/*for (auto const &i : vecLine) {
+    for (auto const &i : vecLine) {
       sf::Vertex res[2];
       res[0] = i.first;
       res[1] = i.second;
       mainWindow.draw(res, 2, sf::Lines);
-    } 
-	for (auto const& i : vecCircle) {
-		mainWindow.draw(i);
-	}*/
-    mainWindow.display(); 
+    }
+
+    mainWindow.display();
   }
 
   return 0;
