@@ -26,4 +26,5 @@ public:
   void setSliderValue(float newValue);
   void setSliderPercentValue(float newPercentValue);
   void draw(sf::RenderWindow &window);
+  void  setAxisColor(sf::Color color);
 };

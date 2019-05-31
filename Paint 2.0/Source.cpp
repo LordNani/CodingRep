@@ -1,5 +1,6 @@
 
 #include "Tools.h"
+#include <SFML\Config.hpp>
 #include <SFML\Graphics.hpp>
 #include <array>
 #include <vector>
@@ -13,7 +14,9 @@ int main() {
                               "MainWindow");
   mainWindow.setFramerateLimit(2000);
   sf::RenderWindow toolWindow(sf::VideoMode(toolWindowWidth, toolWindowHeight),
-                              "Tool window");
+	  "Tool window", sf::Style::Titlebar | sf::Style::Close);
+  toolWindow.setPosition(mainWindow.getPosition() +
+                         sf::Vector2i(mainWindow.getSize().x, 0));
   sf::Image image;
   sf::Texture canvasHelp;
   sf::Sprite mainSprite, toolSprite;
@@ -24,14 +27,13 @@ int main() {
   SliderSFML sliderBlue(20, toolWindowHeight * 11 / 16);
   SliderSFML sliderGreen(20, toolWindowHeight * 13 / 16);
   SliderSFML sliderAlpha(20, toolWindowHeight * 15 / 16);
-  
 
   std::vector<SliderSFML> vecSlider{sliderRed, sliderBlue, sliderGreen,
-                                    sliderAlpha, sliderThickness}; 
+                                    sliderAlpha, sliderThickness};
 
   sf::Color currentColor(0, 0, 0, 255); // Color that user's chosen
   sf::Color toolColor(105, 105, 105);
-  int currentTool = 0;   // instrument that is currently chosen
+  int currentTool = 2;   // instrument that is currently chosen
   float thickness = 40;  // line thickness, brush size, or outline thickness
   bool isFilled = false; // if false, thickness = outline thickness
 
@@ -47,9 +49,12 @@ int main() {
   mainCanvas.setSmooth(true);
   mainSprite.setTexture(mainCanvas.getTexture(), true);
 
-  slidersInit(vecSlider, currentColor, thickness);
+  sf::Sprite texture;
+  sf::RectangleShape shape();
+
+  slidersInit(vecSlider, currentColor,
+              thickness); // set sliders to currentColor and thickness
   while (mainWindow.isOpen()) {
-    // canvasHelp.loadFromImage(image);
     slidersRender(vecSlider, currentColor, thickness);
     sf::Event event;
     while (mainWindow.pollEvent(event)) {
@@ -135,6 +140,21 @@ int main() {
         view.setSize(size);         // Set the size
         view.setCenter(size / 2.f); // moving our drawing to the top left
         mainWindow.setView(view);   // Apply the view
+      } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::T) &&
+                 !toolWindow.isOpen()) {
+        std::cout << "T is pressed";
+        toolWindow.create(sf::VideoMode(toolWindowWidth, toolWindowHeight),
+                          "Tool window",  sf::Style::Titlebar | sf::Style::Close);
+        toolWindow.setPosition(mainWindow.getPosition() +
+                               sf::Vector2i(mainWindow.getSize().x, 0));
+        slidersInit(vecSlider, currentColor, thickness);
+      }
+    }
+
+    sf::Event event2;
+    if (toolWindow.pollEvent(event2)) {
+      if (event2.type == sf::Event::Closed) {
+        toolWindow.close();
       }
     }
 

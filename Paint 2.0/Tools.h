@@ -17,7 +17,7 @@ void drawEllipse(sf::RenderTexture &canvas, sf::Color &color,
 void setR(int type);
 void renderOnScreen(sf::RenderWindow &mWindow, sf::RenderWindow &toolWindow,
                     sf::Sprite &sprite, sf::Sprite &toolSprite,
-                    std::vector<SliderSFML> vecSlider);
+                    std::vector<SliderSFML> &vecSlider);
 void slidersInit(std::vector<SliderSFML> &vecSlider, const sf::Color& color,
 	const float& thickness);
 void slidersRender(std::vector<SliderSFML> &vecSlider, sf::Color& color,

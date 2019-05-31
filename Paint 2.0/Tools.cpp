@@ -178,7 +178,10 @@ void drawEllipse(sf::RenderTexture &canvas, sf::Color &color,
 
 void renderOnScreen(sf::RenderWindow &mWindow, sf::RenderWindow &toolWindow,
                     sf::Sprite &mainSprite, sf::Sprite &toolSprite,
-                    std::vector<SliderSFML> vecSlider) {
+                    std::vector<SliderSFML> &vecSlider) {
+	/*
+	toolSprite.getLocalBounds().contains
+	*/
   mWindow.clear();
   mWindow.draw(mainSprite);
   if (RT == 1) {
@@ -204,6 +207,16 @@ void slidersInit(std::vector<SliderSFML> &vecSlider, const sf::Color &color,
     i.create(0, 255);
   }
   vecSlider.at(4).create(0, 100);
+  vecSlider.at(0).setSliderValue(color.r);
+  vecSlider.at(1).setSliderValue(color.g);
+  vecSlider.at(2).setSliderValue(color.b);
+  vecSlider.at(3).setSliderValue(color.a);
+  vecSlider.at(4).setSliderValue(thickness);
+
+  vecSlider.at(0).setAxisColor(sf::Color::Red);
+  vecSlider.at(1).setAxisColor(sf::Color::Green);
+  vecSlider.at(2).setAxisColor(sf::Color::Blue);
+  vecSlider.at(3).setAxisColor(sf::Color::White);
 }
 void slidersRender(std::vector<SliderSFML> &vecSlider, sf::Color &color,
                    float &thickness) {

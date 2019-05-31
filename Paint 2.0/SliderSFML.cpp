@@ -8,8 +8,8 @@ SliderSFML::SliderSFML(int x, int y)
 	axisHeight = 10;
 	axisWidth = 280;
 	axisWidth = 280;
-	sliderWidth = 15;
-	sliderHeight = 20;
+	sliderWidth = 20;
+	sliderHeight = 40;
 
 	if (!font.loadFromFile("Fonts\\Roboto-Light.ttf"))
 		std::cout << "Error loading font\n";
@@ -33,6 +33,11 @@ sf::Text SliderSFML::returnText(int x, int y, std::string z, int fontSize)
 	text.setPosition(x, y);
 	text.setString(z);
 	return text;
+}
+
+void  SliderSFML::setAxisColor(sf::Color color) {
+	axis.setFillColor(color);
+
 }
 
 void SliderSFML::create(int min, int max)
@@ -86,10 +91,10 @@ void SliderSFML::setSliderPercentValue(float newPercentValue)
 void SliderSFML::draw(sf::RenderWindow &window)
 {
 	logic(window);
-	window.draw(returnText(xCord - 10, yCord + 5, std::to_string(minValue), 20));
+	//window.draw(returnText(xCord - 20, yCord + 5, std::to_string(minValue), 20));
 	window.draw(axis);
-	window.draw(returnText(xCord + axisWidth - 10, yCord + 5, std::to_string(maxValue), 20));
+	//window.draw(returnText(xCord + axisWidth - 20, yCord + 5, std::to_string(maxValue), 20));
 	window.draw(slider);
-	window.draw(returnText(slider.getPosition().x - sliderWidth, slider.getPosition().y - sliderHeight,
+	window.draw(returnText(slider.getPosition().x - sliderWidth+5, slider.getPosition().y - sliderHeight,
 		std::to_string((int)sliderValue), 15));
 }
