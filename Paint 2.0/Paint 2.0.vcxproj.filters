@@ -21,9 +21,15 @@
     <ClCompile Include="Tools.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="SliderSFML.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SliderSFML.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,5 +1,6 @@
 #include "Tools.h"
-#include <SFML/Graphics.hpp>
+#include "SFML/Graphics.hpp"
+
 #include <cmath>
 #define PI 3.1415926535898
 
@@ -72,13 +73,12 @@ void drawLine(sf::RenderTexture &canvas, sf::Color &color,
     } else {
       tLine.setPosition(point1);
       tLine.setFillColor(color);
-
       float dx = point1.x - currentPos.x;
       float dy = point1.y - currentPos.y;
       float length = sqrt(dx * dx + dy * dy);
       float rotation = (atan2(dy, dx)) * 180 / PI;
       tLine.setSize(sf::Vector2f(thickness, length));
-	  tLine.setOrigin(sf::Vector2f(thickness / 2, 0));
+      tLine.setOrigin(sf::Vector2f(thickness / 2, 0));
       tLine.setRotation(rotation + 90);
 
       canvas.draw(tLine);
@@ -175,15 +175,41 @@ void drawEllipse(sf::RenderTexture &canvas, sf::Color &color,
     canvas.display();
   }
 }
-void renderOnScreen(sf::RenderWindow &mWindow, sf::Sprite &sprite) {
+
+void renderOnScreen(sf::RenderWindow &mWindow, sf::RenderWindow &toolWindow,
+                    sf::Sprite &mainSprite, sf::Sprite &toolSprite,
+                    std::vector<SliderSFML> vecSlider) {
   mWindow.clear();
-  mWindow.draw(sprite);
+  mWindow.draw(mainSprite);
   if (RT == 1) {
     mWindow.draw(rect);
   } else if (RT == 2) {
     mWindow.draw(ellipse);
   }
-
   mWindow.display();
+
+  toolWindow.clear();
+  toolWindow.draw(toolSprite);
+  for (auto &i : vecSlider) {
+    i.draw(toolWindow);
+  }
+  toolWindow.display();
 }
+
 void setR(int type) { RT = type; }
+
+void slidersInit(std::vector<SliderSFML> vecSlider, const sf::Color &color,
+                 const float &thickness) {
+  for (auto &i : vecSlider) {
+    i.create(0, 255);
+  }
+  vecSlider.at(4).create(0, 100);
+}
+void slidersRender(std::vector<SliderSFML> vecSlider, sf::Color &color,
+                   float &thickness) {
+	thickness = vecSlider.at(4).getSliderValue();
+	color.r = vecSlider.at(0).getSliderValue();
+	color.g = vecSlider.at(1).getSliderValue();
+	color.b = vecSlider.at(2).getSliderValue();
+	color.a = vecSlider.at(3).getSliderValue();
+}
