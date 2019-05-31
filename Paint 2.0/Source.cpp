@@ -1,8 +1,6 @@
 
 #include "Tools.h"
 #include <SFML\Graphics.hpp>
-#include "SFML\Main.hpp"
-#include <SFML\Window.hpp>
 #include <array>
 #include <vector>
 #define windowHeight 768
@@ -20,15 +18,16 @@ int main() {
   sf::Texture canvasHelp;
   sf::Sprite mainSprite, toolSprite;
   sf::RenderTexture mainCanvas, toolCanvas;
-  /*
-  SliderSFML sliderRed(20, 320 * 8 / 16);
-  SliderSFML sliderBlue(20, 320 * 10 / 16);
-  SliderSFML sliderGreen(20, 320 * 12 / 16);
-  SliderSFML sliderAlpha(20, 320 * 14 / 16);
-  SliderSFML sliderThickness(20, 320 * 6 / 16); 
+
+  SliderSFML sliderThickness(20, toolWindowHeight * 7 / 16);
+  SliderSFML sliderRed(20, toolWindowHeight * 9 / 16);
+  SliderSFML sliderBlue(20, toolWindowHeight * 11 / 16);
+  SliderSFML sliderGreen(20, toolWindowHeight * 13 / 16);
+  SliderSFML sliderAlpha(20, toolWindowHeight * 15 / 16);
+  
 
   std::vector<SliderSFML> vecSlider{sliderRed, sliderBlue, sliderGreen,
-                                    sliderAlpha, sliderThickness}; */
+                                    sliderAlpha, sliderThickness}; 
 
   sf::Color currentColor(0, 0, 0, 255); // Color that user's chosen
   sf::Color toolColor(105, 105, 105);
@@ -48,7 +47,7 @@ int main() {
   mainCanvas.setSmooth(true);
   mainSprite.setTexture(mainCanvas.getTexture(), true);
 
-  //slidersInit(vecSlider, currentColor, thickness);
+  slidersInit(vecSlider, currentColor, thickness);
   while (mainWindow.isOpen()) {
     // canvasHelp.loadFromImage(image);
     slidersRender(vecSlider, currentColor, thickness);

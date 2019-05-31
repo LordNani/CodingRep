@@ -198,14 +198,14 @@ void renderOnScreen(sf::RenderWindow &mWindow, sf::RenderWindow &toolWindow,
 
 void setR(int type) { RT = type; }
 
-void slidersInit(std::vector<SliderSFML> vecSlider, const sf::Color &color,
+void slidersInit(std::vector<SliderSFML> &vecSlider, const sf::Color &color,
                  const float &thickness) {
   for (auto &i : vecSlider) {
     i.create(0, 255);
   }
   vecSlider.at(4).create(0, 100);
 }
-void slidersRender(std::vector<SliderSFML> vecSlider, sf::Color &color,
+void slidersRender(std::vector<SliderSFML> &vecSlider, sf::Color &color,
                    float &thickness) {
 	thickness = vecSlider.at(4).getSliderValue();
 	color.r = vecSlider.at(0).getSliderValue();

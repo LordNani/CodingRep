@@ -1,5 +1,5 @@
 #pragma once
-#include <SFML/Graphics.hpp>
+#include <SFML\Graphics.hpp>
 #include "SliderSFML.h"
 
 void drawPencil(sf::Color &color, sf::Vector2i currentPos, int mode,
@@ -18,7 +18,7 @@ void setR(int type);
 void renderOnScreen(sf::RenderWindow &mWindow, sf::RenderWindow &toolWindow,
                     sf::Sprite &sprite, sf::Sprite &toolSprite,
                     std::vector<SliderSFML> vecSlider);
-void slidersInit(std::vector<SliderSFML> vecSlider, const sf::Color& color,
+void slidersInit(std::vector<SliderSFML> &vecSlider, const sf::Color& color,
 	const float& thickness);
-void slidersRender(std::vector<SliderSFML> vecSlider, sf::Color& color,
-	float& thickness)
+void slidersRender(std::vector<SliderSFML> &vecSlider, sf::Color& color,
+	float& thickness);
