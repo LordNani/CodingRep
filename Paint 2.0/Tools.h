@@ -1,6 +1,7 @@
 #pragma once
-#include <SFML\Graphics.hpp>
+#include "ButtonSFML.h"
 #include "SliderSFML.h"
+#include <SFML\Graphics.hpp>
 
 void drawPencil(sf::Color &color, sf::Vector2i currentPos, int mode,
                 sf::RenderTexture &canvas);
@@ -17,8 +18,11 @@ void drawEllipse(sf::RenderTexture &canvas, sf::Color &color,
 void setR(int type);
 void renderOnScreen(sf::RenderWindow &mWindow, sf::RenderWindow &toolWindow,
                     sf::Sprite &sprite, sf::Sprite &toolSprite,
-                    std::vector<SliderSFML> &vecSlider);
-void slidersInit(std::vector<SliderSFML> &vecSlider, const sf::Color& color,
-	const float& thickness);
-void slidersRender(std::vector<SliderSFML> &vecSlider, sf::Color& color,
-	float& thickness);
+                    std::vector<SliderSFML> &vecSlider,
+                    std::vector<ButtonSFML> vecButtons);
+void slidersInit(std::vector<SliderSFML> &vecSlider, const sf::Color &color,
+                 const float &thickness);
+void slidersRender(std::vector<SliderSFML> &vecSlider, sf::Color &color,
+                   float &thickness);
+void buttonHandler(sf::Vector2f pos, std::vector<ButtonSFML>& vecButtons,
+	int& currentTool);

@@ -128,11 +128,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ButtonSFML.cpp" />
     <ClCompile Include="SliderSFML.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Tools.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ButtonSFML.h" />
     <ClInclude Include="SliderSFML.h" />
     <ClInclude Include="Tools.h" />
   </ItemGroup>

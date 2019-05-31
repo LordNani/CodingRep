@@ -1,6 +1,5 @@
 #include "Tools.h"
 #include "SFML/Graphics.hpp"
-
 #include <cmath>
 #define PI 3.1415926535898
 
@@ -178,7 +177,7 @@ void drawEllipse(sf::RenderTexture &canvas, sf::Color &color,
 
 void renderOnScreen(sf::RenderWindow &mWindow, sf::RenderWindow &toolWindow,
                     sf::Sprite &mainSprite, sf::Sprite &toolSprite,
-                    std::vector<SliderSFML> &vecSlider) {
+                    std::vector<SliderSFML> &vecSlider, std::vector<ButtonSFML> vecButtons) {
 	/*
 	toolSprite.getLocalBounds().contains
 	*/
@@ -193,9 +192,13 @@ void renderOnScreen(sf::RenderWindow &mWindow, sf::RenderWindow &toolWindow,
 
   toolWindow.clear();
   toolWindow.draw(toolSprite);
-  for (auto &i : vecSlider) {
-    i.draw(toolWindow);
+  for (auto& i : vecSlider) {
+	  i.draw(toolWindow);
   }
+  for (auto& i : vecButtons) {
+	  i.draw(toolWindow);
+  }
+
   toolWindow.display();
 }
 
@@ -225,4 +228,12 @@ void slidersRender(std::vector<SliderSFML> &vecSlider, sf::Color &color,
 	color.g = vecSlider.at(1).getSliderValue();
 	color.b = vecSlider.at(2).getSliderValue();
 	color.a = vecSlider.at(3).getSliderValue();
+}
+
+void buttonHandler(sf::Vector2f pos, std::vector<ButtonSFML>& vecButtons,
+	int& currentTool) {
+	for (auto& i : vecButtons) {
+		if (i.getLocalBounds().contains(pos)) {
+		}
+	}
 }

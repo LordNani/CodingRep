@@ -1,4 +1,5 @@
 
+#include "ButtonSFML.h"
 #include "Tools.h"
 #include <SFML\Config.hpp>
 #include <SFML\Graphics.hpp>
@@ -14,7 +15,8 @@ int main() {
                               "MainWindow");
   mainWindow.setFramerateLimit(2000);
   sf::RenderWindow toolWindow(sf::VideoMode(toolWindowWidth, toolWindowHeight),
-	  "Tool window", sf::Style::Titlebar | sf::Style::Close);
+                              "Tool window",
+                              sf::Style::Titlebar | sf::Style::Close);
   toolWindow.setPosition(mainWindow.getPosition() +
                          sf::Vector2i(mainWindow.getSize().x, 0));
   sf::Image image;
@@ -27,13 +29,23 @@ int main() {
   SliderSFML sliderBlue(20, toolWindowHeight * 11 / 16);
   SliderSFML sliderGreen(20, toolWindowHeight * 13 / 16);
   SliderSFML sliderAlpha(20, toolWindowHeight * 15 / 16);
-
   std::vector<SliderSFML> vecSlider{sliderRed, sliderBlue, sliderGreen,
                                     sliderAlpha, sliderThickness};
+  std::string test = "NOTEXT";
+  sf::Texture pencilIcon;
+  sf::Texture* help = &pencilIcon;
+
+ 
+  pencilIcon.loadFromFile("pencil.png");
+  ButtonSFML buttonPencil(toolWindowWidth / 4, toolWindowHeight * 1 / 16, 64.f,
+                          64.f, true, true, 0, test);
+  buttonPencil.setTexture(help);
+  
+  std::vector<ButtonSFML> vecButtons{ buttonPencil };
 
   sf::Color currentColor(0, 0, 0, 255); // Color that user's chosen
   sf::Color toolColor(105, 105, 105);
-  int currentTool = 2;   // instrument that is currently chosen
+  int currentTool = 3;   // instrument that is currently chosen
   float thickness = 40;  // line thickness, brush size, or outline thickness
   bool isFilled = false; // if false, thickness = outline thickness
 
@@ -144,7 +156,8 @@ int main() {
                  !toolWindow.isOpen()) {
         std::cout << "T is pressed";
         toolWindow.create(sf::VideoMode(toolWindowWidth, toolWindowHeight),
-                          "Tool window",  sf::Style::Titlebar | sf::Style::Close);
+                          "Tool window",
+                          sf::Style::Titlebar | sf::Style::Close);
         toolWindow.setPosition(mainWindow.getPosition() +
                                sf::Vector2i(mainWindow.getSize().x, 0));
         slidersInit(vecSlider, currentColor, thickness);
@@ -155,22 +168,17 @@ int main() {
     if (toolWindow.pollEvent(event2)) {
       if (event2.type == sf::Event::Closed) {
         toolWindow.close();
+      } else if (event.type == sf::Event::MouseButtonPressed) {
+        buttonHandler(sf::Vector2f(sf::Mouse::getPosition()), vecButtons,
+                      currentTool);
       }
     }
 
-    /*  sf::RectangleShape test(
-          sf::Vector2f(400, 200)); // start of test rect in the middle
-      test.setPosition(windowWidth / 2 - test.getSize().x / 2,
-                       windowHeight / 2 - test.getSize().y / 2);
-      test.setFillColor(sf::Color::Transparent);
-      test.setOutlineThickness(2.f);
-      test.setOutlineColor(sf::Color::Black);
-      mainCanvas.draw(test);
-      mainCanvas.display(); // end of it.*/
-
-    renderOnScreen(mainWindow, toolWindow, mainSprite, toolSprite,
-                   vecSlider); // Every frame render main window && toolWindow
+    renderOnScreen(mainWindow, toolWindow, mainSprite, toolSprite, vecSlider,
+                   vecButtons); // Every frame render main window && toolWindow
   }
 
   return 0;
 }
+
+
