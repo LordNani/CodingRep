@@ -6,7 +6,6 @@ class ButtonSFML {
   sf::RectangleShape button;
   sf::Text text;
   sf::Font font;
-  sf::Texture test;
   int posX, posY;
   int width, height;
   bool isPressed;
@@ -16,9 +15,13 @@ class ButtonSFML {
 
 public:
   ButtonSFML(int x, int y, float widthX, float heightY, bool isToggle, bool pressed,
-             int returnNumber, const std::string&);
+             int returnNumber, const std::string& label);
   int buttonPressed();
-  sf::FloatRect getLocalBounds();
+  sf::FloatRect getGlobalBounds();
   void draw(sf::RenderWindow& window);
   void setTexture(sf::Texture *back);
+  void setTextPosition(sf::Vector2f pos);
+  sf::Vector2f getPosition();
+  void setTextPosition(std::string words);
+  bool getOn();
 };

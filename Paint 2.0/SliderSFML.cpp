@@ -9,7 +9,7 @@ SliderSFML::SliderSFML(int x, int y)
 	axisWidth = 280;
 	axisWidth = 280;
 	sliderWidth = 20;
-	sliderHeight = 40;
+	sliderHeight = 38;
 
 	if (!font.loadFromFile("Fonts\\Roboto-Light.ttf"))
 		std::cout << "Error loading font\n";

@@ -3,6 +3,7 @@
 #include "SliderSFML.h"
 #include <SFML\Graphics.hpp>
 
+
 void drawPencil(sf::Color &color, sf::Vector2i currentPos, int mode,
                 sf::RenderTexture &canvas);
 void drawLine(sf::RenderTexture &canvas, sf::Color &color,
@@ -24,5 +25,7 @@ void slidersInit(std::vector<SliderSFML> &vecSlider, const sf::Color &color,
                  const float &thickness);
 void slidersRender(std::vector<SliderSFML> &vecSlider, sf::Color &color,
                    float &thickness);
-void buttonHandler(sf::Vector2f pos, std::vector<ButtonSFML>& vecButtons,
-	int& currentTool);
+void buttonHandler(sf::RenderWindow& mWindow, sf::RenderTexture& mainCanvas, sf::Vector2f pos, std::vector<ButtonSFML>& vecButtons,
+	int& currentTool, bool& isErasing,bool &isSaved, bool& isFilled);
+void saveFile(sf::RenderWindow& mainWindow);
+void openFile( sf::RenderTexture &mainCanvas);

@@ -1,6 +1,7 @@
 #include "Tools.h"
 #include "SFML/Graphics.hpp"
 #include <cmath>
+#include "tinyfiledialogs.h"
 #define PI 3.1415926535898
 
 std::vector<std::pair<sf::Vertex, sf::Vertex>> vecLine; // vector to store lines
@@ -11,9 +12,10 @@ sf::CircleShape brush;   // brush shape
 sf::ConvexShape ellipse; // for ellipse tool
 float radius_x;
 float radius_y;
-unsigned short const quality = 50; // point Count of convex
-sf::Vector2f point1;               // for everything
-sf::RectangleShape rect;           // rect tool
+float realThickness;
+unsigned short const quality = 100; // point Count of convex
+sf::Vector2f point1;                // for everything
+sf::RectangleShape rect;            // rect tool
 
 int RT = 0;
 
@@ -99,27 +101,12 @@ void drawRect(sf::RenderTexture &canvas, sf::Color &color,
       rect.setPosition(point1);
       rect.setSize(currentPos - point1);
     } else {
+      rect.setPosition(point1 + sf::Vector2f(-thickness, -thickness));
+      rect.setSize(currentPos - point1);
       rect.setFillColor(sf::Color::Transparent);
       rect.setOutlineColor(color);
       rect.setOutlineThickness(thickness);
-
-      if (point1.x > currentPos.x && point1.y > currentPos.y) {
-        rect.setSize(currentPos - point1 +
-                     sf::Vector2f(2 * thickness, 2 * thickness));
-        rect.setPosition(point1 - sf::Vector2f(thickness, thickness));
-      } else if (point1.x > currentPos.x && point1.y < currentPos.y) {
-        rect.setSize(currentPos - point1 +
-                     sf::Vector2f(2 * thickness, -2 * thickness));
-        rect.setPosition(point1 - sf::Vector2f(thickness, -1 * thickness));
-      } else if (point1.y > currentPos.y) {
-        rect.setSize(currentPos - point1 +
-                     sf::Vector2f(-2 * thickness, 2 * thickness));
-        rect.setPosition(point1 + sf::Vector2f(thickness, -1 * thickness));
-      } else {
-        rect.setSize(currentPos - point1 +
-                     sf::Vector2f(-2 * thickness, -2 * thickness));
-        rect.setPosition(point1 + sf::Vector2f(thickness, thickness));
-      }
+      rect.setOrigin(sf::Vector2f(-thickness, -thickness));
     }
   } else {
 
@@ -132,55 +119,69 @@ void drawRect(sf::RenderTexture &canvas, sf::Color &color,
 void drawEllipse(sf::RenderTexture &canvas, sf::Color &color,
                  sf::Vector2f currentPos, float thickness, bool isFilled,
                  bool mode) {
-  if (mode)
-    point1 = currentPos;
+
+	if (mode) {
+		point1 = currentPos;
+		setR(2);
+	}
   else {
 
     ellipse.setPointCount(quality);
 
     if (isFilled) {
-      radius_x = (currentPos.x - point1.x) / 2.f;
-      radius_y = (currentPos.y - point1.y) / 2.f;
+      radius_x = (currentPos.x - point1.x) ;
+      radius_y = (currentPos.y - point1.y) ;
       ellipse.setFillColor(color);
       ellipse.setPosition(point1 + sf::Vector2f(radius_x, radius_y));
     } else {
-      radius_x = (abs(currentPos.x - point1.x) - 2 * thickness) / 2.f;
-      radius_y = (abs(currentPos.y - point1.y) - 2 * thickness) / 2.f;
+      radius_x = (abs(currentPos.x - point1.x) - thickness) ;
+      radius_y = (abs(currentPos.y - point1.y) - thickness) ;
+     // ellipse.setOrigin(sf::Vector2f(-thickness, -thickness));
       ellipse.setFillColor(sf::Color::Transparent);
       ellipse.setOutlineColor(color);
       ellipse.setOutlineThickness(thickness);
-      if (point1.x > currentPos.x && point1.y > currentPos.y) {
-        ellipse.setPosition(point1 - sf::Vector2f(radius_x, radius_y) -
-                            sf::Vector2f(thickness, thickness));
-      } else if (point1.y > currentPos.y) {
-        ellipse.setPosition(point1 + sf::Vector2f(radius_x, -2 * radius_y) +
-                            sf::Vector2f(thickness, thickness));
-      } else if (point1.x > currentPos.x && point1.y < currentPos.y) {
-        ellipse.setPosition(point1 + sf::Vector2f(-1.f * radius_x, radius_y) +
-                            sf::Vector2f(-1.f * thickness, thickness));
-      } else {
-        ellipse.setPosition(point1 + sf::Vector2f(radius_x, radius_y) +
-                            sf::Vector2f(thickness, thickness));
-      }
+      ellipse.setPosition(point1 + sf::Vector2f(-thickness, -thickness));
+
+      /*  if (point1.x > currentPos.x && point1.y > currentPos.y) {
+                      ellipse.setPosition(point1 - sf::Vector2f(radius_x,
+        radius_y) - sf::Vector2f(thickness, thickness)); } else if (point1.y >
+        currentPos.y) { ellipse.setPosition(point1 + sf::Vector2f(radius_x, -2 *
+        radius_y) + sf::Vector2f(thickness, thickness)); } else if (point1.x >
+        currentPos.x && point1.y < currentPos.y) { ellipse.setPosition(point1
+        + sf::Vector2f(-1.f * radius_x, radius_y) + sf::Vector2f(-1.f *
+        thickness, thickness)); } else { ellipse.setPosition(point1 +
+        sf::Vector2f(radius_x, radius_y) + sf::Vector2f(thickness,
+        thickness));
+        } */
     }
 
     for (unsigned int i = 0; i < quality; ++i) {
-      float rad = (360 / quality * i) / (360 / PI / 2);
+      float rad = (360.f / quality * i) / (360 / PI / 2);
       float x = cos(rad) * radius_x;
       float y = sin(rad) * radius_y;
       ellipse.setPoint(i, sf::Vector2f(x, y));
     };
-    canvas.draw(ellipse);
-    canvas.display();
+
+    radius_x = (currentPos.x - point1.x + 2* thickness) / 2.f;
+    radius_y = (currentPos.y - point1.y +  2*thickness) / 2.f;
+   
+    ellipse.setFillColor(sf::Color::Transparent);
+    ellipse.setOutlineColor(color);
+    ellipse.setOutlineThickness(thickness);
+    ellipse.setPosition(point1 + sf::Vector2f(-thickness, -thickness));
+	ellipse.setOrigin(sf::Vector2f(-thickness, -thickness));
+    setR(2);
+
+    //canvas.draw(ellipse);
+   // canvas.display();
   }
 }
 
 void renderOnScreen(sf::RenderWindow &mWindow, sf::RenderWindow &toolWindow,
                     sf::Sprite &mainSprite, sf::Sprite &toolSprite,
-                    std::vector<SliderSFML> &vecSlider, std::vector<ButtonSFML> vecButtons) {
-	/*
-	toolSprite.getLocalBounds().contains
-	*/
+                    std::vector<SliderSFML> &vecSlider,
+                    std::vector<ButtonSFML> vecButtons) {
+
   mWindow.clear();
   mWindow.draw(mainSprite);
   if (RT == 1) {
@@ -192,11 +193,11 @@ void renderOnScreen(sf::RenderWindow &mWindow, sf::RenderWindow &toolWindow,
 
   toolWindow.clear();
   toolWindow.draw(toolSprite);
-  for (auto& i : vecSlider) {
-	  i.draw(toolWindow);
+  for (auto &i : vecSlider) {
+    i.draw(toolWindow);
   }
-  for (auto& i : vecButtons) {
-	  i.draw(toolWindow);
+  for (auto &i : vecButtons) {
+    i.draw(toolWindow);
   }
 
   toolWindow.display();
@@ -223,17 +224,68 @@ void slidersInit(std::vector<SliderSFML> &vecSlider, const sf::Color &color,
 }
 void slidersRender(std::vector<SliderSFML> &vecSlider, sf::Color &color,
                    float &thickness) {
-	thickness = vecSlider.at(4).getSliderValue();
-	color.r = vecSlider.at(0).getSliderValue();
-	color.g = vecSlider.at(1).getSliderValue();
-	color.b = vecSlider.at(2).getSliderValue();
-	color.a = vecSlider.at(3).getSliderValue();
+  thickness = vecSlider.at(4).getSliderValue();
+  color.r = vecSlider.at(0).getSliderValue();
+  color.g = vecSlider.at(1).getSliderValue();
+  color.b = vecSlider.at(2).getSliderValue();
+  color.a = vecSlider.at(3).getSliderValue();
 }
 
-void buttonHandler(sf::Vector2f pos, std::vector<ButtonSFML>& vecButtons,
-	int& currentTool) {
-	for (auto& i : vecButtons) {
-		if (i.getLocalBounds().contains(pos)) {
-		}
-	}
+int lastResult;
+
+void buttonHandler(sf::RenderWindow& mWindow, sf::RenderTexture& mainCanvas, sf::Vector2f pos, std::vector<ButtonSFML> &vecButtons,
+                   int &currentTool, bool &isErasing, bool& isSaved,bool &isFilled) {
+
+  for (auto &i : vecButtons) {
+    if (i.getGlobalBounds().contains(pos)) {
+      lastResult = i.buttonPressed();
+    }
+  }
+
+  if (lastResult == 5) {//for eraser
+    isErasing = true;
+    currentTool = 2;
+  } else if(lastResult == 6){//for save button
+	  saveFile(mWindow);
+	  isSaved = true;
+  }
+  else if (lastResult == 7) { //openFile
+	  openFile(mainCanvas);
+  }
+  else if (lastResult == 8) { //Filled/NotFilled
+	  isFilled = vecButtons.at(8).getOn();
+	  if (isFilled) {
+		//  vecButtons.at(8).setTexture
+	  }
+  }
+  else {
+	  currentTool = lastResult;
+  }
+}
+
+void saveFile(sf::RenderWindow& mainWindow) {
+	char const* filterPatterns[2] = { "*.png", "*.jpg" };
+	char const* saveFile = tinyfd_saveFileDialog("Save File", "\\default.png", 2,
+		filterPatterns, NULL);
+
+	sf::Vector2u windowSize = mainWindow.getSize();
+	sf::Texture texture;
+	texture.create(windowSize.x, windowSize.y);
+	texture.update(mainWindow);
+	sf::Image screenshot = texture.copyToImage();
+	screenshot.saveToFile(saveFile);
+}
+
+
+sf::Texture buttonOn;
+sf::Image helpingTouch;
+void openFile( sf::RenderTexture &mainCanvas) {
+	char const* filterPatterns[2] = { "*.png", "*.jpg" };
+	char const* fileAdress = tinyfd_openFileDialog("Open file", "\\default.png", 2, filterPatterns, NULL, 0);
+	sf::Texture texture;
+	texture.loadFromFile(fileAdress);
+	sf::Sprite sprite;
+	sprite.setTexture(texture);
+	mainCanvas.draw(sprite);
+	mainCanvas.display();
 }
