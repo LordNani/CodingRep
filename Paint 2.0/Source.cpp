@@ -10,9 +10,30 @@
 #define toolWindowWidth 320
 #define toolWindowHeight 600
 
-void saveFile(sf::RenderWindow &mainWindow);
+sf::Image image, mButtonImage;
+sf::Texture canvasHelp, assistTexture, pencilIcon, brushIcon, lineIcon,
+eraserIcon;
+sf::Sprite mainSprite, toolSprite;
+sf::RenderTexture mainCanvas, toolCanvas;
+
+SliderSFML sliderThickness(20, toolWindowHeight * 18 / 32);
+SliderSFML sliderRed(20, toolWindowHeight * 21 / 32);
+SliderSFML sliderBlue(20, toolWindowHeight * 24 / 32);
+SliderSFML sliderGreen(20, toolWindowHeight * 27 / 32);
+SliderSFML sliderAlpha(20, toolWindowHeight * 30 / 32);
+std::vector<SliderSFML> vecSlider{ sliderRed, sliderBlue, sliderGreen,
+								  sliderAlpha, sliderThickness };
+
+sf::Color currentColor(0, 0, 0, 255); // Color that user's chosen
+sf::Color erasingColor(255, 255, 255, 255);
+sf::Color toolColor(105, 105, 105);
+int currentTool = 0;   // instrument that is currently chosen
+float thickness = 10;  // line thickness, brush size, or outline thickness
+bool isFilled = true; // if false, thickness = outline thickness
+bool isErasing = false;
 
 int main() {
+
   sf::RenderWindow mainWindow(sf::VideoMode(windowWidth, windowHeight),
                               "MainWindow");
   mainWindow.setFramerateLimit(8000);
@@ -21,20 +42,10 @@ int main() {
                               sf::Style::Titlebar | sf::Style::Close);
   toolWindow.setPosition(mainWindow.getPosition() +
                          sf::Vector2i(mainWindow.getSize().x, 0));
-  sf::Image image, mButtonImage;
-  sf::Texture canvasHelp, assistTexture, pencilIcon, brushIcon, lineIcon,
-      eraserIcon;
-  sf::Sprite mainSprite, toolSprite;
-  sf::RenderTexture mainCanvas, toolCanvas;
+
   const std::string notext = "NOTEXT";
 
-  SliderSFML sliderThickness(20, toolWindowHeight * 18 / 32);
-  SliderSFML sliderRed(20, toolWindowHeight * 21 / 32);
-  SliderSFML sliderBlue(20, toolWindowHeight * 24 / 32);
-  SliderSFML sliderGreen(20, toolWindowHeight * 27 / 32);
-  SliderSFML sliderAlpha(20, toolWindowHeight * 30 / 32);
-  std::vector<SliderSFML> vecSlider{sliderRed, sliderBlue, sliderGreen,
-                                    sliderAlpha, sliderThickness};
+
   // Preparing icons for buttonsSFML
   pencilIcon.loadFromFile("icons\\pencil.png");
   pencilIcon.setSmooth(true);
@@ -81,21 +92,12 @@ int main() {
   buttonOpen.setTextPosition(buttonOpen.getPosition() + sf::Vector2f(3, 10));
   buttonOpen.setTexture(&assistTexture);
   ButtonSFML buttonFilled(toolWindowWidth / 20, toolWindowHeight * 8 / 32, 72.f,
-	  48.f, true, false, 8, std::string("Filled"));
+	  48.f, true, true, 8, std::string("Filled"));
   buttonFilled.setTextPosition(buttonFilled.getPosition() + sf::Vector2f(4, 8));
-  buttonFilled.setTexture(&assistTexture);
 
   std::vector<ButtonSFML> vecButtons{buttonPencil, buttonLine,    buttonBrush,
                                      buttonRect,   buttonEllipse, buttonEraser,
                                      buttonSave,buttonOpen,buttonFilled };
-
-  sf::Color currentColor(0, 0, 0, 255); // Color that user's chosen
-  sf::Color erasingColor(255, 255, 255, 255);
-  sf::Color toolColor(105, 105, 105);
-  int currentTool = 0;   // instrument that is currently chosen
-  float thickness = 10;  // line thickness, brush size, or outline thickness
-  bool isFilled = true; // if false, thickness = outline thickness
-  bool isErasing = false;
 
   sf::Vector2i prevPos;
 
@@ -111,7 +113,7 @@ int main() {
   bool isSaved = false; // Checking whether the image is save already
   slidersInit(vecSlider, currentColor,
               thickness); // set sliders to currentColor and thickness
-
+  init(vecButtons.at(8));
   while (mainWindow.isOpen()) {
     slidersRender(vecSlider, currentColor, thickness);
     sf::Event event;
@@ -158,12 +160,7 @@ int main() {
                    isFilled, 2);
           break;
         }
-        case 4: {
-          drawEllipse(mainCanvas, currentColor,
-                      sf::Vector2f(sf::Mouse::getPosition(mainWindow)),
-                      thickness, isFilled, false);
-          break;
-        }
+
         }
       } else if (event.type == sf::Event::MouseButtonPressed) {
         switch (currentTool) {

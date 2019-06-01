@@ -29,3 +29,4 @@ void buttonHandler(sf::RenderWindow& mWindow, sf::RenderTexture& mainCanvas, sf:
 	int& currentTool, bool& isErasing,bool &isSaved, bool& isFilled);
 void saveFile(sf::RenderWindow& mainWindow);
 void openFile( sf::RenderTexture &mainCanvas);
+void init(ButtonSFML& vecButtons);
