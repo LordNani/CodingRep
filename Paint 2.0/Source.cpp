@@ -21,6 +21,8 @@ SliderSFML sliderRed(20, toolWindowHeight * 21 / 32);
 SliderSFML sliderBlue(20, toolWindowHeight * 24 / 32);
 SliderSFML sliderGreen(20, toolWindowHeight * 27 / 32);
 SliderSFML sliderAlpha(20, toolWindowHeight * 30 / 32);
+
+
 std::vector<SliderSFML> vecSlider{ sliderRed, sliderBlue, sliderGreen,
 								  sliderAlpha, sliderThickness };
 
@@ -28,11 +30,16 @@ sf::Color currentColor(0, 0, 0, 255); // Color that user's chosen
 sf::Color erasingColor(255, 255, 255, 255);
 sf::Color toolColor(105, 105, 105);
 int currentTool = 0;   // instrument that is currently chosen
-float thickness = 10;  // line thickness, brush size, or outline thickness
+float thickness = 20;  // line thickness, brush size, or outline thickness
 bool isFilled = true; // if false, thickness = outline thickness
 bool isErasing = false;
 
 int main() {
+	
+	sf::Clock clock;
+	float time;
+	int fpscount = 0;
+
 
   sf::RenderWindow mainWindow(sf::VideoMode(windowWidth, windowHeight),
                               "MainWindow");
@@ -115,9 +122,11 @@ int main() {
               thickness); // set sliders to currentColor and thickness
   init(vecButtons.at(8));
   while (mainWindow.isOpen()) {
+
     slidersRender(vecSlider, currentColor, thickness);
     sf::Event event;
     while (mainWindow.pollEvent(event)) {
+		mainWindow.requestFocus();
       if (event.type == sf::Event::Closed) {
         if (!isSaved) {
           int var =
@@ -134,35 +143,7 @@ int main() {
 			mainWindow.close();
 		}
 
-      } else if ((event.type ==
-                  sf::Event::MouseMoved) && // MouseMoved and leftClickHeld
-                 sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-        switch (currentTool) {
-        case 0: {
-          drawPencil(currentColor, sf::Mouse::getPosition(mainWindow), 0,
-                     mainCanvas);
-          break;
-        }
-        case 2: {
-          if (isErasing)
-            drawBrush(mainCanvas, erasingColor,
-                      sf::Vector2f(sf::Mouse::getPosition(mainWindow)),
-                      thickness);
-          else
-            drawBrush(mainCanvas, currentColor,
-                      sf::Vector2f(sf::Mouse::getPosition(mainWindow)),
-                      thickness);
-          break;
-        }
-        case 3: {
-          drawRect(mainCanvas, currentColor,
-                   sf::Vector2f(sf::Mouse::getPosition(mainWindow)), thickness,
-                   isFilled, 2);
-          break;
-        }
-
-        }
-      } else if (event.type == sf::Event::MouseButtonPressed) {
+      }  else if (event.type == sf::Event::MouseButtonPressed) {
         switch (currentTool) {
         case 0: {
           drawPencil(currentColor, sf::Mouse::getPosition(mainWindow), 1,
@@ -194,15 +175,47 @@ int main() {
         case 4: {
           drawEllipse(mainCanvas, currentColor,
                       sf::Vector2f(sf::Mouse::getPosition(mainWindow)),
-                      thickness, isFilled, true);
+                      thickness, isFilled, 1);
           break;
         }
         }
-      } else if (event.type == sf::Event::MouseButtonReleased) {
+      }
+	  else if ((event.type ==
+		  sf::Event::MouseMoved) && // MouseMoved and leftClickHeld
+		  sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+		  switch (currentTool) {
+		  case 0: {
+			  drawPencil(currentColor, sf::Mouse::getPosition(mainWindow), 0,
+				  mainCanvas);
+			  break;
+		  }
+		  case 2: {
+			  if (isErasing)
+				  drawBrush(mainCanvas, erasingColor,
+					  sf::Vector2f(sf::Mouse::getPosition(mainWindow)),
+					  thickness);
+			  else
+				  drawBrush(mainCanvas, currentColor,
+					  sf::Vector2f(sf::Mouse::getPosition(mainWindow)),
+					  thickness);
+			  break;
+		  }
+		  case 3: {
+			  drawRect(mainCanvas, currentColor,
+				  sf::Vector2f(sf::Mouse::getPosition(mainWindow)), thickness,
+				  isFilled, 2);
+			  break;
+		  }
+		  case 4: {
+			  drawEllipse(mainCanvas, currentColor,
+				  sf::Vector2f(sf::Mouse::getPosition(mainWindow)),
+				  thickness, isFilled, 2);
+			  break;
+		  }
+		  }
+	  }
+	  else if (event.type == sf::Event::MouseButtonReleased) {
         switch (currentTool) {
-        case 0: {
-          break;
-        }
         case 3: {
           drawRect(mainCanvas, currentColor,
                    sf::Vector2f(sf::Mouse::getPosition(mainWindow)), thickness,
@@ -212,7 +225,7 @@ int main() {
         case 4: {
           drawEllipse(mainCanvas, currentColor,
                       sf::Vector2f(sf::Mouse::getPosition(mainWindow)),
-                      thickness, isFilled, false);
+                      thickness, isFilled, 3);
           break;
         }
         }
@@ -242,12 +255,13 @@ int main() {
         buttonHandler(mainWindow, mainCanvas,
                       sf::Vector2f(sf::Mouse::getPosition(toolWindow)),
                       vecButtons, currentTool, isErasing, isSaved,isFilled);
-        mainWindow.requestFocus();
+		mainWindow.requestFocus();
       }
     }
 
     renderOnScreen(mainWindow, toolWindow, mainSprite, toolSprite, vecSlider,
                    vecButtons); // Every frame render main window && toolWindow
+	
   }
 
   return 0;
