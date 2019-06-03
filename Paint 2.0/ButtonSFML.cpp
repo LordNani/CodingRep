@@ -33,9 +33,7 @@ void ButtonSFML::setTextPosition(std::string words) { text.setString(words); }
 
 sf::FloatRect ButtonSFML::getGlobalBounds() { return button.getGlobalBounds(); }
 
-bool ButtonSFML::getOn() {
-	return isPressed;
-}
+bool ButtonSFML::getOn() { return isPressed; }
 
 int ButtonSFML::buttonPressed() {
   if (isToggling) {
@@ -53,6 +51,6 @@ void ButtonSFML::draw(sf::RenderWindow &window) {
 
 void ButtonSFML::setTexture(sf::Texture *back) {
   button.setTexture(back, false);
-  
 }
 
+void ButtonSFML::setText(std::string newText) { text.setString(newText); }

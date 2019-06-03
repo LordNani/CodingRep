@@ -31,3 +31,8 @@ void buttonHandler(sf::RenderWindow &mWindow, sf::RenderTexture &mainCanvas,
 void saveFile(sf::RenderWindow &mainWindow);
 void openFile(sf::RenderTexture &mainCanvas);
 void init(ButtonSFML &vecButtons);
+void select(sf::RenderWindow &mainWindow, sf::Vector2f curPos, bool mode);
+void paste(sf::RenderWindow &mainWindow, sf::Vector2f curPos,
+           sf::RenderTexture &mainCanvas);
+void copy(sf::RenderWindow &mainWindow);
+void cut(sf::RenderWindow &mainWindow, sf::RenderTexture &mainCanvas);
